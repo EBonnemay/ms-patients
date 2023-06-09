@@ -15,7 +15,7 @@ public interface PatientsRepository extends CrudRepository<Patient, Integer> {
 
     //@Query(value="SELECT patient FROM table_patients WHERE patient.family = :family and patient.given = :given", nativeQuery = true)
     //Optional<Patient> findByFullName(@Param("family")String family, @Param("given") String given);
-   // @Query(value = "SELECT * FROM table_patients WHERE family = :family AND given = :given", nativeQuery = true)
-    //Optional<Patient> findByFullName(@Param("family") String family, @Param("given") String given);
+   @Query(value = "SELECT * FROM table_patients WHERE family = :family AND given = :given", nativeQuery = true)
+   Optional<Patient> findByFullName(@Param("family") String family, @Param("given") String given);
 
 }
