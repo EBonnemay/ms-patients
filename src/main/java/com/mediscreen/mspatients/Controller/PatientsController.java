@@ -34,10 +34,10 @@ public class PatientsController {
         return patientsService.getPatients();
     }
     //@GetMapping("/patient/{id}")
-    //public Patient getPatientById(@RequestParam Integer id){
+    //public Patient getPatientById(@PathVariable Integer id){
     //return patientsService.getPatientById(id);
 //
-    @GetMapping("patient/{id}")
+    @GetMapping("/patient/{id}")
     public Patient getPatientById(@PathVariable Integer id){
         try {
             return patientsService.getPatientById(id);
@@ -48,15 +48,18 @@ public class PatientsController {
     }
 
         @GetMapping("/patientByFullName")
-        public Patient getPatientByName(@Valid @RequestParam String family, @Valid @RequestParam String given){
+        public Patient getPatientByName(@Valid @PathVariable String family, @Valid @PathVariable String given){
             return patientsService.getPatientByFullName(family, given);
         }
 
-        @PutMapping("/patient/update")
-        public Patient updatePatient(@Valid @RequestBody Patient updatedPatientEntity){
-           Patient result= new Patient();
+        @PostMapping("/patient/update/{id}")
+
+        public Patient updatePatient(@PathVariable("id") String id, @RequestParam(name = "family", required = true) String family, @RequestParam(name = "given", required = true) String given, @RequestParam(name = "date_of_birth", required = false) Date dateOfBirth, @RequestParam(name = "sex", required = false) String sex, @RequestParam(name = "address", required = false) String address, @RequestParam(name = "phone", required = false) String phone){
+           System.out.println("date of birth in patient controller is "+dateOfBirth);
+            Patient result= new Patient();
+
             try{
-                result = patientsService.updatePatient(updatedPatientEntity);
+                result = patientsService.updatePatient(id, family, given, dateOfBirth, sex, address, phone);
                 logger.info("person updated successfully");
                 return result;
             }catch(RuntimeException e){
@@ -81,7 +84,7 @@ public class PatientsController {
     //curl -d "family=TestNone&given=Test&dob=1966-12-31&sex=F&address=1 Brookside St&phone=100-222-3333" -X POST http://localhost:8081/patient/add
 
             @PostMapping("/patient/add")
-            public ResponseEntity<Patient> addPatient(@Valid @RequestParam String family, @Valid @RequestParam String given,  @RequestParam (value = "dob", required = false) Date dob, @RequestParam (value = "sex", required = false)String sex, @RequestParam (value = "address", required = false)String address, @RequestParam (value = "phone", required = false)String phone){
+            public ResponseEntity<Patient> addPatient(@Valid @PathVariable String family, @Valid @PathVariable String given,  @PathVariable (value = "dob", required = false) Date dob, @PathVariable (value = "sex", required = false)String sex, @PathVariable (value = "address", required = false)String address, @PathVariable (value = "phone", required = false)String phone){
 
                 try {
                     Patient patient = patientsService.addPatient(family, given, dob, sex, address, phone);
@@ -96,8 +99,8 @@ public class PatientsController {
 
             }
 
-    @DeleteMapping("/patient/delete")
-        public void deletePatient(@Valid @RequestParam String family, @Valid @RequestParam String given){
+    @DeleteMapping("/patient/delete/{id}")
+        public void deletePatient(@Valid @PathVariable String family, @Valid @PathVariable String given){
             Iterable<Patient> listOfPatients = new ArrayList<>();
             try {
                 patientsService.deletePatient(family, given);
