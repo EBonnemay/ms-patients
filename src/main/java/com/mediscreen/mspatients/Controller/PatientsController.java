@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.mediscreen.mspatients.service.PatientsService;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -52,7 +54,7 @@ public class PatientsController {
             return patientsService.getPatientByFullName(family, given);
         }
 
-        @PostMapping("/patient/update/{id}")
+       /* @PostMapping("/patient/update/{id}")
 
         public Patient updatePatient(@PathVariable("id") String id, @RequestParam(name = "family", required = true) String family, @RequestParam(name = "given", required = true) String given, @RequestParam(name = "date_of_birth", required = false) Date dateOfBirth, @RequestParam(name = "sex", required = false) String sex, @RequestParam(name = "address", required = false) String address, @RequestParam(name = "phone", required = false) String phone){
            System.out.println("date of birth in patient controller is "+dateOfBirth);
@@ -66,8 +68,21 @@ public class PatientsController {
                 logger.error("person not found");
                 throw new PatientNotFoundException("patient not found");
             }
-        }
+        }*/
+       @PostMapping("/patient/update/{id}")
 
+       public void updatePatient(@PathVariable("id") String id, @RequestBody Patient patient){
+           System.out.println(patient.getFamily());
+           Patient result= new Patient();
+
+           try{
+               patientsService.updatePatient(id, patient);
+
+           }catch(RuntimeException e){
+               logger.error("person not found");
+               throw new PatientNotFoundException("patient not found");
+           }
+       }
        /* @PostMapping("/patient/add")
         public Iterable<Patient> addPatient(@RequestBody Patient newPatient) {
             Iterable<Patient> listOfPatients = new ArrayList<>();
@@ -84,10 +99,11 @@ public class PatientsController {
     //curl -d "family=TestNone&given=Test&dob=1966-12-31&sex=F&address=1 Brookside St&phone=100-222-3333" -X POST http://localhost:8081/patient/add
 
             @PostMapping("/patient/add")
-            public ResponseEntity<Patient> addPatient(@Valid @PathVariable String family, @Valid @PathVariable String given,  @PathVariable (value = "dob", required = false) Date dob, @PathVariable (value = "sex", required = false)String sex, @PathVariable (value = "address", required = false)String address, @PathVariable (value = "phone", required = false)String phone){
-
+            public ResponseEntity<Patient>addPatient(@RequestBody Patient patient){
+                //null
+                System.out.println("inside PatientController is "+ patient.getFamily());
                 try {
-                    Patient patient = patientsService.addPatient(family, given, dob, sex, address, phone);
+                    patientsService.addPatient(patient);
                     logger.info("person added successfully");
                     URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath("/patient/{id}").buildAndExpand(patient.getPatient_id()).toUri();
                     logger.info("uri location is "+ location.toString());
@@ -99,11 +115,11 @@ public class PatientsController {
 
             }
 
-    @DeleteMapping("/patient/delete/{id}")
-        public void deletePatient(@Valid @PathVariable String family, @Valid @PathVariable String given){
-            Iterable<Patient> listOfPatients = new ArrayList<>();
+    @PostMapping("/patient/delete/{id}")
+        public void deletePatient(@PathVariable ("id")String id){
+           System.out.println("in PatientController, patient's id to delete : "+ id);
             try {
-                patientsService.deletePatient(family, given);
+                patientsService.deletePatient(id);
                 logger.info("person deleted successfully");
             } catch (RuntimeException e) {
                 logger.error("item not found");//

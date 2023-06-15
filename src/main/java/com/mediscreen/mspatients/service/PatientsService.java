@@ -28,7 +28,7 @@ public class PatientsService {
         Optional <Patient> opt = patientsRepository.findByFullName(family, given);
         return opt.get();
     }
-    public Patient updatePatient(String id, String family, String given, Date dateOfBirth, String sex, String address, String phone){
+   /* public Patient updatePatient(String id, String family, String given, Date dateOfBirth, String sex, String address, String phone){
         Optional<Patient> optPatient = patientsRepository.findById(Integer.parseInt(id));
         Patient patient = optPatient.get();
         patient.setFamily(family);
@@ -40,24 +40,40 @@ public class PatientsService {
         patientsRepository.save(patient);
         return patient;
 
+    }*/
+    public void updatePatient(String id, Patient updatedPatient){
+        Optional<Patient> optPatient = patientsRepository.findById(Integer.parseInt(id));
+        Patient existingPatient = optPatient.get();
+
+        existingPatient.setFamily(updatedPatient.getFamily());
+        existingPatient.setGiven(updatedPatient.getGiven());
+        existingPatient.setDate_of_birth(updatedPatient.getDate_of_birth());
+        existingPatient.setSex(updatedPatient.getSex());
+        existingPatient.setAddress(updatedPatient.getAddress());
+        existingPatient.setPhone(updatedPatient.getPhone());
+
+        // Save the updated patient
+        patientsRepository.save(existingPatient);
     }
     /*public Iterable<Patient> addPatient(Patient newPatient){
         //Iterable<Patient> listOfPatients
         patientsRepository.save(newPatient);
         return patientsRepository.findAll();
     }*/
-    public Patient addPatient(String family, String given, Date dob, String sex, String address, String phone){
-        Patient newPatient = new Patient(family, given, dob, sex, address, phone);
+    public void addPatient(Patient patient){
 
-        patientsRepository.save(newPatient);
-        return newPatient;
+
+        patientsRepository.save(patient);
+
     }
-    public void deletePatient(String family, String given){
+    public void deletePatient(String i){
+        Integer idInteger = Integer.parseInt(i);
+        System.out.println("idInteger is "+ idInteger);
         //Iterable<Patient> listOfPatients
-        Optional<Patient>optPatientToDelete = patientsRepository.findByFullName(family, given);
-        Patient patientToDelete = optPatientToDelete.get();
-        int i = patientToDelete.getPatient_id();
-        patientsRepository.deleteById(i);
+        //Optional<Patient>optPatientToDelete = patientsRepository.findByFullName(family, given);
+        //Patient patientToDelete = optPatientToDelete.get();
+        //int i = patientToDelete.getPatient_id();
+        patientsRepository.deleteById(idInteger);
     }
 
 }
