@@ -115,7 +115,7 @@ public class PatientsController {
 
             }
 
-    @PostMapping("/patient/delete/{id}")
+    @GetMapping("/patient/delete/{id}")
         public void deletePatient(@PathVariable ("id")String id){
            System.out.println("in PatientController, patient's id to delete : "+ id);
             try {
