@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 @RestController
+@RequestMapping(path = "/patient")
 public class PatientsController {
 
     static final Logger logger = LogManager.getLogger();
@@ -29,8 +30,8 @@ public class PatientsController {
     public PatientsController(PatientsService patientsService) {
         this.patientsService = patientsService;
     }
-
-    @GetMapping("/patients")
+    /**api request : all patients__tested postman*/
+    @GetMapping("/all")
     public Iterable<Patient> getPatients() {
         logger.info("inside getPatients");
         return patientsService.getPatients();
@@ -39,7 +40,8 @@ public class PatientsController {
     //public Patient getPatientById(@PathVariable Integer id){
     //return patientsService.getPatientById(id);
 //
-    @GetMapping("/patient/{id}")
+    /**api request : one patient by id__tested postman*/
+    @GetMapping("/{id}")
     public Patient getPatientById(@PathVariable Integer id){
         try {
             return patientsService.getPatientById(id);
@@ -48,28 +50,14 @@ public class PatientsController {
             throw new PatientNotFoundException("no patient with this id ");
         }
     }
-
-        @GetMapping("/patientByFullName")
+    /**api request : one patient by family and given as PathVariables__tested postman*/
+        @GetMapping("/ByFullName/{family}/{given}")
         public Patient getPatientByName(@Valid @PathVariable String family, @Valid @PathVariable String given){
             return patientsService.getPatientByFullName(family, given);
         }
 
-       /* @PostMapping("/patient/update/{id}")
-
-        public Patient updatePatient(@PathVariable("id") String id, @RequestParam(name = "family", required = true) String family, @RequestParam(name = "given", required = true) String given, @RequestParam(name = "date_of_birth", required = false) Date dateOfBirth, @RequestParam(name = "sex", required = false) String sex, @RequestParam(name = "address", required = false) String address, @RequestParam(name = "phone", required = false) String phone){
-           System.out.println("date of birth in patient controller is "+dateOfBirth);
-            Patient result= new Patient();
-
-            try{
-                result = patientsService.updatePatient(id, family, given, dateOfBirth, sex, address, phone);
-                logger.info("person updated successfully");
-                return result;
-            }catch(RuntimeException e){
-                logger.error("person not found");
-                throw new PatientNotFoundException("patient not found");
-            }
-        }*/
-       @PostMapping("/patient/update/{id}")
+    /**api request : update patient by id and Patient RequestBody__tested postman*/
+       @PostMapping("/update/{id}")
 
        public void updatePatient(@PathVariable("id") String id, @RequestBody Patient patient){
            System.out.println(patient.getFamily());
@@ -83,22 +71,9 @@ public class PatientsController {
                throw new PatientNotFoundException("patient not found");
            }
        }
-       /* @PostMapping("/patient/add")
-        public Iterable<Patient> addPatient(@RequestBody Patient newPatient) {
-            Iterable<Patient> listOfPatients = new ArrayList<>();
-            try {
-                listOfPatients = patientsService.addPatient(newPatient);
-                logger.info("person added successfully");
-                return listOfPatients;
-            } catch (RuntimeException e) {
-                logger.error("item not found");
-                return listOfPatients;
-            }
-        }*/
 
-    //curl -d "family=TestNone&given=Test&dob=1966-12-31&sex=F&address=1 Brookside St&phone=100-222-3333" -X POST http://localhost:8081/patient/add
-
-            @PostMapping("/patient/add")
+    /**api request : add one patient with Patient object as parameter__tested postman*/
+            @PostMapping("/add")
             public ResponseEntity<Patient>addPatient(@RequestBody Patient patient){
                 //null
                 System.out.println("inside PatientController is "+ patient.getFamily());
@@ -114,8 +89,8 @@ public class PatientsController {
                     }
 
             }
-
-    @GetMapping("/patient/delete/{id}")
+    /**api request : delete one patient by id__tested postman__ be careful about handling errors, for now 200 OK!! and person deleted successfully even if non existing id*/
+    @GetMapping("delete/{id}")
         public void deletePatient(@PathVariable ("id")String id){
            System.out.println("in PatientController, patient's id to delete : "+ id);
             try {
