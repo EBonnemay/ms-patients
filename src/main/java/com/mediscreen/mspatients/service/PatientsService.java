@@ -6,6 +6,9 @@ import com.mediscreen.mspatients.repository.PatientsRepository;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,5 +78,7 @@ public class PatientsService {
         //int i = patientToDelete.getPatient_id();
         patientsRepository.deleteById(idInteger);
     }
+
+
 
 }
