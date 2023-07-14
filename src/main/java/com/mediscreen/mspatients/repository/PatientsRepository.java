@@ -18,4 +18,6 @@ public interface PatientsRepository extends CrudRepository<Patient, Integer> {
    @Query(value = "SELECT * FROM table_patients WHERE family = :family AND given = :given", nativeQuery = true)
    Optional<Patient> findByFullName(@Param("family") String family, @Param("given") String given);
 
+    @Override
+    boolean existsById(Integer integer);
 }

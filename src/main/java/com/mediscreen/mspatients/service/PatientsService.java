@@ -13,19 +13,25 @@ import java.util.Optional;
 
 @Service
 public class PatientsService {
+
     private PatientsRepository patientsRepository;
     public PatientsService(PatientsRepository patientsRepository){
         this.patientsRepository = patientsRepository;
 
+    }
+    public boolean existsById(Integer id){
+        return patientsRepository.existsById(id);
     }
 
     public Iterable<Patient> getPatients(){
         return patientsRepository.findAll();
     }
     public Patient getPatientById(int id){
-        Optional<Patient> opt = patientsRepository.findById(id);
-        return opt.get();
+       Optional< Patient > opt = patientsRepository.findById(id);
+       Patient patient = opt.get();
+       return patient;
     }
+
     public Patient getPatientByFullName(String family, String given){
         Optional <Patient> opt = patientsRepository.findByFullName(family, given);
         return opt.get();
@@ -43,7 +49,7 @@ public class PatientsService {
         return patient;
 
     }*/
-    public void updatePatient(String id, Patient updatedPatient){
+    public Patient updatePatient(String id, Patient updatedPatient){
         Optional<Patient> optPatient = patientsRepository.findById(Integer.parseInt(id));
         Patient existingPatient = optPatient.get();
 
@@ -56,16 +62,21 @@ public class PatientsService {
 
         // Save the updated patient
         patientsRepository.save(existingPatient);
+        return existingPatient;
     }
     /*public Iterable<Patient> addPatient(Patient newPatient){
         //Iterable<Patient> listOfPatients
         patientsRepository.save(newPatient);
         return patientsRepository.findAll();
     }*/
-    public void addPatient(Patient patient){
+    public Patient addPatient(Patient patient) throws Exception {
+
+        if(patientsRepository.existsById(patient.getPatient_id())){
+            throw new Exception();
+        }
+        return patientsRepository.save(patient);
 
 
-        patientsRepository.save(patient);
 
     }
     public void deletePatient(String i){
